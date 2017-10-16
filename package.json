@@ -2,14 +2,30 @@
   "name": "nodeditor",
   "version": "0.0.1",
   "description": "Simple console text editor",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint src --max-warnings 0",
+    "build": "babel src/ -d dist/",
+    "start": "npm run build && node dist/index.js",
+    "test": "npm run lint"
   },
   "keywords": [
     "console",
     "editor"
   ],
   "author": "Bannerets <save14@protonmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^2.11.0",
+    "fs-extra": "^4.0.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.0.1",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-flow": "^6.23.0",
+    "eslint": "^4.9.0",
+    "eslint-plugin-async-await": "0.0.0",
+    "eslint-plugin-flowtype": "^2.39.1"
+  }
 }
