@@ -1,0 +1,15 @@
+{
+  "name": "nodeditor",
+  "version": "0.0.1",
+  "description": "Simple console text editor",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "console",
+    "editor"
+  ],
+  "author": "Bannerets <save14@protonmail.com>",
+  "license": "MIT"
+}
