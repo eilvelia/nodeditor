@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "eslint": "eslint src --max-warnings 0",
-    "flow": "flow",
+    "flow": "flow .",
     "build": "babel src/ -d dist/",
     "start": "npm run build && node dist/index.js",
     "test": "npm run lint && npm run flow"
@@ -29,6 +29,7 @@
     "babel-preset-flow": "^6.23.0",
     "eslint": "^4.9.0",
     "eslint-plugin-async-await": "0.0.0",
-    "eslint-plugin-flowtype": "^2.39.1"
+    "eslint-plugin-flowtype": "^2.39.1",
+    "flow-bin": "^0.57.3"
   }
 }
