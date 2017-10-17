@@ -59,22 +59,19 @@ function keypress (ch: ?Char, key: ?Key): void {
       return
     }
 
-    if (key.name === 'backspace') {
+    switch (key.name) {
+    case 'backspace':
       if (pos.x > 0) {
         buffer.removeChar(pos.y, pos.x-1)
         pos.x--
         drawLine(pos.y)
       }
       return
-    }
-
-    if (key.name === 'return') {
+    case 'return':
       Movement.down()
       updateCursorPos()
       return
-    }
 
-    switch (key.name) {
     case 'up':
       Movement.up()
       break
