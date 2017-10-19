@@ -12,7 +12,11 @@
   },
   "keywords": [
     "console",
-    "editor"
+    "editor",
+    "console-application",
+    "application",
+    "app",
+    "flow"
   ],
   "author": "Bannerets <save14@protonmail.com>",
   "license": "MIT",
