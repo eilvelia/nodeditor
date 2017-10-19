@@ -17,6 +17,8 @@ const buffer = new Buffer()
 
 buffer.allocRow(0)
 
+updateWindow()
+
 const editor = { keypress }
 
 export default editor
@@ -25,33 +27,40 @@ class Movement {
   static up () {
     if (pos.y > 0) {
       pos.y--
-      pos.x = buffer.getRow(pos.y).length
+      const row = buffer.getRow(pos.y)
+      pos.x = row[pos.x] ? pos.x : row.length
     }
   }
 
   static down () {
-    if (pos.y < height-1) {
+    if (pos.y < height-1 && buffer.isRowExists(pos.y+1)) {
       pos.y++
-      pos.x = buffer.getRow(pos.y).length
+      const row = buffer.getRow(pos.y)
+      pos.x = row[pos.x] ? pos.x : row.length
     }
   }
 
   static left () {
     if (pos.x > 0) pos.x--
+    else if (pos.y > 0) {
+      pos.y--
+      pos.x = buffer.getRow(pos.y).length
+    }
   }
 
   static right () {
     if (pos.x < width && pos.x < buffer.getRow(pos.y).length) pos.x++
+    else if (buffer.isRowExists(pos.y+1)) {
+      pos.y++
+      pos.x = 0
+    }
   }
 }
 
 function keypress (ch: ?Char, key: ?Key): void {
   //console.log(ch, key)
 
-  // $FlowFixMe
-  width = process.stdout.columns
-  // $FlowFixMe
-  height = process.stdout.rows
+  updateWindow()
 
   if (key) {
     if (key.ctrl && key.name === 'c') {
@@ -65,11 +74,16 @@ function keypress (ch: ?Char, key: ?Key): void {
         buffer.removeChar(pos.y, pos.x-1)
         pos.x--
         drawLine(pos.y)
+      } else if (pos.y > 0 && pos.y === buffer.length()-1) {
+        buffer.removeRow(pos.y)
+        pos.y--
+        pos.x = buffer.getRow(pos.y).length
+        updateCursorPos()
       }
+
       return
     case 'return':
-      Movement.down()
-      updateCursorPos()
+      newLine()
       return
 
     case 'up':
@@ -92,8 +106,21 @@ function keypress (ch: ?Char, key: ?Key): void {
     buffer.addChar(pos.y, pos.x, ch)
     pos.x++
     drawLine(pos.y)
-    log(JSON.stringify(pos), JSON.stringify(buffer._buffer))
   }
+}
+
+function updateWindow (): void {
+  // $FlowFixMe
+  width = process.stdout.columns
+  // $FlowFixMe
+  height = process.stdout.rows
+}
+
+function newLine (): void {
+  pos.y++
+  buffer.allocRow(pos.y)
+  pos.x = buffer.getRow(pos.y).length
+  updateCursorPos()
 }
 
 function isEditable (key: ?Key): boolean {

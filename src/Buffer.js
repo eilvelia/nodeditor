@@ -12,9 +12,27 @@ class Buffer {
   }
 
   getRow (y: number): Char[] {
+    return this._buffer[y]
+  }
+
+  addRow (y: number, row: Char[]): this {
+    this._buffer.splice(y, 0, row)
+
     return this
-      .allocRow(y)
-      ._buffer[y]
+  }
+
+  removeRow (y: number): this {
+    this._buffer.splice(y, 1)
+
+    return this
+  }
+
+  isRowExists (y: number): boolean {
+    return !!this.getRow(y)
+  }
+
+  length (): number {
+    return this._buffer.length
   }
 
   addChar (y: number, x: number, ch: Char): this {
