@@ -9,7 +9,7 @@ const stream = process.env.NODE_ENV === 'production'
   ? null
   : fs.createWriteStream(LOG_FILE)
 
-const log = (...args: Array<string | number>) => {
+const log = (...args: Array<*>) => {
   if (!stream) return
 
   const text = args.join(' ')
