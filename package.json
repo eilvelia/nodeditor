@@ -10,16 +10,13 @@
     "start": "npm run build && node dist/index.js",
     "test": "npm run lint && npm run flow"
   },
-  "keywords": [
-    "console",
-    "editor",
-    "console-application",
-    "application",
-    "app",
-    "flow"
+  "files": [
+    "dist",
+    "bin"
   ],
-  "author": "Bannerets <save14@protonmail.com>",
-  "license": "MIT",
+  "bin": {
+    "nodeditor": "bin/nodeditor"
+  },
   "preferGlobal": true,
   "dependencies": {
     "commander": "^2.11.0",
@@ -35,5 +32,15 @@
     "eslint-plugin-async-await": "0.0.0",
     "eslint-plugin-flowtype": "^2.39.1",
     "flow-bin": "^0.57.3"
-  }
+  },
+  "author": "Bannerets <save14@protonmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "console",
+    "editor",
+    "console-application",
+    "application",
+    "app",
+    "flow"
+  ]
 }
