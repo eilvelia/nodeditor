@@ -10,6 +10,9 @@
     "start": "npm run build && node dist/index.js",
     "test": "npm run lint && npm run flow"
   },
+  "engines": {
+    "node": ">=6.0.0"
+  },
   "files": [
     "dist",
     "bin"
