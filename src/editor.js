@@ -19,6 +19,11 @@ buffer.allocRow(0)
 
 updateWindow()
 
+/*const window = {
+  x: { start: 0, end: width },
+  y: { start: 0, end: height }
+}*/
+
 const editor = { keypress }
 
 export default editor
@@ -33,7 +38,7 @@ class Movement {
   }
 
   static down () {
-    if (pos.y < height-1 && buffer.isRowExists(pos.y+1)) {
+    if (pos.y < height-1 && buffer.getRow(pos.y+1)) {
       pos.y++
       const row = buffer.getRow(pos.y)
       pos.x = row[pos.x] ? pos.x : row.length
@@ -50,7 +55,7 @@ class Movement {
 
   static right () {
     if (pos.x < width && pos.x < buffer.getRow(pos.y).length) pos.x++
-    else if (buffer.isRowExists(pos.y+1)) {
+    else if (buffer.getRow(pos.y+1)) {
       pos.y++
       pos.x = 0
     }
@@ -73,12 +78,22 @@ function keypress (ch: ?Char, key: ?Key): void {
       if (pos.x > 0) {
         buffer.removeChar(pos.y, pos.x-1)
         pos.x--
-        drawLine(pos.y)
-      } else if (pos.y > 0 && pos.y === buffer.length()-1) {
-        buffer.removeRow(pos.y)
+        drawLineSmart(pos.y)
+
+      } else if (pos.y > 0) {
+        pos.x = buffer.getRow(pos.y-1).length
+
+        if (pos.y === buffer.length()-1 && buffer.getRow(pos.y).length === 0) {
+          buffer.removeRow(pos.y)
+          pos.y--
+          updateCursorPos()
+          return
+        }
+
         pos.y--
-        pos.x = buffer.getRow(pos.y).length
-        updateCursorPos()
+        const removed = buffer.removeRow(pos.y+1)
+        buffer.concatRows(pos.y, removed)
+        draw()
       }
 
       return
@@ -105,22 +120,8 @@ function keypress (ch: ?Char, key: ?Key): void {
   if (ch && isEditable(key)) {
     buffer.addChar(pos.y, pos.x, ch)
     pos.x++
-    drawLine(pos.y)
+    drawLineSmart(pos.y)
   }
-}
-
-function updateWindow (): void {
-  // $FlowFixMe
-  width = process.stdout.columns
-  // $FlowFixMe
-  height = process.stdout.rows
-}
-
-function newLine (): void {
-  pos.y++
-  buffer.allocRow(pos.y)
-  pos.x = buffer.getRow(pos.y).length
-  updateCursorPos()
 }
 
 function isEditable (key: ?Key): boolean {
@@ -131,17 +132,59 @@ function isEditable (key: ?Key): boolean {
   return true
 }
 
+function updateWindow (): void {
+  // $FlowFixMe
+  width = process.stdout.columns
+  // $FlowFixMe
+  height = process.stdout.rows
+}
+
+function newLine (): void {
+  const row = buffer.getRow(pos.y)
+  const removed = row.splice(pos.x, row.length - pos.x)
+  pos.y++
+  pos.x = 0
+  buffer.addRow(pos.y, removed)
+  draw()
+}
+
+function draw (): void {
+  for (let y = 0; y < buffer.length() + 5; y++) {
+    drawLine(y)
+  }
+
+  updateCursorPos()
+}
+
 function drawLine (y: number): void {
+  const row = buffer.getRow(y) || []
+
+  const parsedRow = []
+
+  for (let x = 0; x < width; x++) {
+    parsedRow.push(row[x] || ' ')
+  }
+
+  cursorTo(0, y)
+
+  process.stdout.write(parsedRow.join(''))
+}
+
+function drawLineSmart (y: number): void {
   const row = buffer.getRow(y)
 
-  const start = pos.x - 1
+  const start = pos.x > 0 ? pos.x - 1 : 0
   const end = row.length + 1
+
+  const parsedRow = []
+
+  for (let x = start; x < end; x++) {
+    parsedRow.push(row[x] || ' ')
+  }
 
   cursorTo(start, y)
 
-  for (let x = start; x < end; x++) {
-    process.stdout.write(row[x] || ' ')
-  }
+  process.stdout.write(parsedRow.join(''))
 
   updateCursorPos()
 }

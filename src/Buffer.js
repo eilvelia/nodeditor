@@ -5,7 +5,7 @@ import type { Char } from './typings.h'
 class Buffer {
   _buffer: Char[][] = []
 
-  allocRow (y: number): this {
+  allocRow (y: number = this._buffer.length): this {
     if (typeof this._buffer[y] !== 'object') this._buffer[y] = []
 
     return this
@@ -21,14 +21,14 @@ class Buffer {
     return this
   }
 
-  removeRow (y: number): this {
-    this._buffer.splice(y, 1)
-
-    return this
+  removeRow (y: number): Char[] {
+    return this._buffer.splice(y, 1)[0]
   }
 
-  isRowExists (y: number): boolean {
-    return !!this.getRow(y)
+  concatRows (y: number, row: Char[]): this {
+    this._buffer[y] = this._buffer[y].concat(row)
+
+    return this
   }
 
   length (): number {
