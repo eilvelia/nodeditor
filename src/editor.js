@@ -1,7 +1,7 @@
 // @flow
 
 import readline from 'readline'
-import Buffer from './Buffer'
+import TextBuffer from './TextBuffer'
 import log from './logger'
 
 import type { Char, Key } from './typings.h'
@@ -13,7 +13,7 @@ let width: number = 0
 let height: number = 0
 
 const pos = { x: 0, y: 0 }
-const buffer = new Buffer()
+const buffer = new TextBuffer()
 
 buffer.allocRow(0)
 

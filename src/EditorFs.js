@@ -2,12 +2,12 @@
 
 import { EOL } from 'os'
 import fse from 'fs-extra'
-import Buffer from './Buffer'
+import TextBuffer from './TextBuffer'
 
 import type { Char } from './typings.h'
 
 class EditorFs {
-  static saveToFile (file: string, buffer: Buffer): Promise<void> {
+  static saveToFile (file: string, buffer: TextBuffer): Promise<void> {
     const str = buffer
       .toArray()
       .map(row => row.join(''))
@@ -16,14 +16,14 @@ class EditorFs {
     return fse.writeFile(file, str)
   }
 
-  static async readFromFile (file: string): Promise<Buffer> {
-    const bytes = await fse.readFile(file)
-    const str: string = bytes.toString()
+  static async readFromFile (file: string): Promise<TextBuffer> {
+    const bytes: Buffer = await fse.readFile(file)
+    const str = bytes.toString()
     const buffer: Char[][] = str
       .split(/\r?\n/)
       .map(row => row.split(''))
 
-    return new Buffer(buffer)
+    return new TextBuffer(buffer)
   }
 }
 
