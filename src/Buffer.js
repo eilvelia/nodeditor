@@ -5,6 +5,10 @@ import type { Char } from './typings.h'
 class Buffer {
   _buffer: Char[][] = []
 
+  constructor (buffer?: Char[][]) {
+    this._buffer = buffer || []
+  }
+
   allocRow (y: number = this._buffer.length): this {
     if (typeof this._buffer[y] !== 'object') this._buffer[y] = []
 
@@ -33,6 +37,10 @@ class Buffer {
 
   length (): number {
     return this._buffer.length
+  }
+
+  toArray (): Char[][] {
+    return this._buffer
   }
 
   addChar (y: number, x: number, ch: Char): this {
