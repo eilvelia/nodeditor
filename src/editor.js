@@ -2,6 +2,8 @@
 
 import readline from 'readline'
 import TextBuffer from './TextBuffer'
+import Cursor from './Cursor'
+import Movement from './Movement'
 import log from './logger'
 
 import type { Char, Key } from './typings.h'
@@ -12,8 +14,9 @@ const cursorTo = readline.cursorTo.bind(null, process.stdin)
 let width: number = 0
 let height: number = 0
 
-const pos = { x: 0, y: 0 }
+const pos = new Cursor(0, 0)
 const buffer = new TextBuffer()
+const movement = new Movement(buffer, pos)
 
 buffer.allocRow(0)
 
@@ -27,40 +30,6 @@ updateWindow()
 const editor = { keypress }
 
 export default editor
-
-class Movement {
-  static up () {
-    if (pos.y > 0) {
-      pos.y--
-      const row = buffer.getRow(pos.y)
-      pos.x = row[pos.x] ? pos.x : row.length
-    }
-  }
-
-  static down () {
-    if (pos.y < height-1 && buffer.getRow(pos.y+1)) {
-      pos.y++
-      const row = buffer.getRow(pos.y)
-      pos.x = row[pos.x] ? pos.x : row.length
-    }
-  }
-
-  static left () {
-    if (pos.x > 0) pos.x--
-    else if (pos.y > 0) {
-      pos.y--
-      pos.x = buffer.getRow(pos.y).length
-    }
-  }
-
-  static right () {
-    if (pos.x < width && pos.x < buffer.getRow(pos.y).length) pos.x++
-    else if (buffer.getRow(pos.y+1)) {
-      pos.y++
-      pos.x = 0
-    }
-  }
-}
 
 function keypress (ch: ?Char, key: ?Key): void {
   //console.log(ch, key)
@@ -102,16 +71,16 @@ function keypress (ch: ?Char, key: ?Key): void {
       return
 
     case 'up':
-      Movement.up()
+      movement.up()
       break
     case 'down':
-      Movement.down()
+      movement.down()
       break
     case 'left':
-      Movement.left()
+      movement.left()
       break
     case 'right':
-      Movement.right()
+      movement.right()
     }
 
     updateCursorPos()
@@ -137,6 +106,8 @@ function updateWindow (): void {
   width = process.stdout.columns
   // $FlowFixMe
   height = process.stdout.rows
+
+  movement.updateSize(width, height)
 }
 
 function newLine (): void {

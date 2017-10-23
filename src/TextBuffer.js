@@ -2,7 +2,7 @@
 
 import type { Char } from './typings.h'
 
-class TextBuffer {
+export default class TextBuffer {
   _buffer: Char[][] = []
 
   constructor (buffer?: Char[][]) {
@@ -55,5 +55,3 @@ class TextBuffer {
     return this
   }
 }
-
-export default TextBuffer

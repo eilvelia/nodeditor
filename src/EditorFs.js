@@ -6,7 +6,7 @@ import TextBuffer from './TextBuffer'
 
 import type { Char } from './typings.h'
 
-class EditorFs {
+export default class EditorFs {
   static saveToFile (file: string, buffer: TextBuffer): Promise<void> {
     const str = buffer
       .toArray()
@@ -26,5 +26,3 @@ class EditorFs {
     return new TextBuffer(buffer)
   }
 }
-
-export default EditorFs
