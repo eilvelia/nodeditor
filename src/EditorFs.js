@@ -18,8 +18,8 @@ export default class EditorFs {
 
   static async readFromFile (file: string): Promise<TextBuffer> {
     const bytes: Buffer = await fse.readFile(file)
-    const str = bytes.toString()
-    const buffer: Char[][] = str
+    const buffer: Char[][] = bytes
+      .toString()
       .split(/\r?\n/)
       .map(row => row.split(''))
 

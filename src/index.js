@@ -1,10 +1,10 @@
 // @flow
 
-import pkg from '../package.json'
+import readline from 'readline'
 import program from 'commander'
 import keypress from 'keypress'
-import readline from 'readline'
 import Editor from './editor'
+import pkg from '../package.json'
 
 program
   .version(pkg.version)
