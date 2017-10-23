@@ -34,9 +34,14 @@ export default class Editor {
     updateWindow()
 
     if (key) {
-      if (key.ctrl && key.name === 'c') {
-        process.stdin.pause()
-        return
+      if (key.ctrl) {
+        switch (key.name) {
+        case 'c':
+        case 'x':
+        case 'd':
+          process.stdin.pause()
+          return
+        }
       }
 
       switch (key.name) {
