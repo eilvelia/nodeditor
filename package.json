@@ -8,7 +8,9 @@
     "flow": "flow .",
     "build": "babel src/ -d dist/",
     "start": "npm run build && node dist",
-    "test": "npm run eslint && npm run flow"
+    "mocha": "mocha test/EditorFs",
+    "test": "npm run build && npm run mocha",
+    "prepublish": "npm run eslint && npm run flow && npm run mocha"
   },
   "engines": {
     "node": ">=6.0.0"
@@ -20,6 +22,7 @@
   "bin": {
     "nodeditor": "bin/nodeditor"
   },
+  "private": true,
   "preferGlobal": true,
   "dependencies": {
     "commander": "^2.11.0",
@@ -35,7 +38,8 @@
     "eslint": "^4.9.0",
     "eslint-plugin-async-await": "0.0.0",
     "eslint-plugin-flowtype": "^2.39.1",
-    "flow-bin": "^0.57.3"
+    "flow-bin": "^0.57.3",
+    "mocha": "^4.0.1"
   },
   "author": "Bannerets <save14@protonmail.com>",
   "license": "MIT",
