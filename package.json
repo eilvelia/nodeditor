@@ -7,8 +7,8 @@
     "eslint": "eslint src --max-warnings 0",
     "flow": "flow .",
     "build": "babel src/ -d dist/",
-    "start": "npm run build && node dist/index.js",
-    "test": "npm run lint && npm run flow"
+    "start": "npm run build && node dist",
+    "test": "npm run eslint && npm run flow"
   },
   "engines": {
     "node": ">=6.0.0"
