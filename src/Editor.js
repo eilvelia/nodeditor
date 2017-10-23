@@ -27,69 +27,46 @@ updateWindow()
   y: { start: 0, end: height }
 }*/
 
-const editor = { keypress }
+export default class Editor {
+  static keypress (ch: ?Char, key: ?Key): void {
+    //console.log(ch, key)
 
-export default editor
+    updateWindow()
 
-function keypress (ch: ?Char, key: ?Key): void {
-  //console.log(ch, key)
-
-  updateWindow()
-
-  if (key) {
-    if (key.ctrl && key.name === 'c') {
-      process.stdin.pause()
-      return
-    }
-
-    switch (key.name) {
-    case 'backspace':
-      if (pos.x > 0) {
-        buffer.removeChar(pos.y, pos.x-1)
-        pos.x--
-        drawLineSmart(pos.y)
-
-      } else if (pos.y > 0) {
-        pos.x = buffer.getRow(pos.y-1).length
-
-        if (pos.y === buffer.length()-1 && buffer.getRow(pos.y).length === 0) {
-          buffer.removeRow(pos.y)
-          pos.y--
-          updateCursorPos()
-          return
-        }
-
-        pos.y--
-        const removed = buffer.removeRow(pos.y+1)
-        buffer.concatRows(pos.y, removed)
-        draw()
+    if (key) {
+      if (key.ctrl && key.name === 'c') {
+        process.stdin.pause()
+        return
       }
 
-      return
-    case 'return':
-      newLine()
-      return
+      switch (key.name) {
+      case 'backspace':
+        backspace()
+        return
+      case 'return':
+        newLine()
+        return
+      case 'up':
+        movement.up()
+        break
+      case 'down':
+        movement.down()
+        break
+      case 'left':
+        movement.left()
+        break
+      case 'right':
+        movement.right()
+      }
 
-    case 'up':
-      movement.up()
-      break
-    case 'down':
-      movement.down()
-      break
-    case 'left':
-      movement.left()
-      break
-    case 'right':
-      movement.right()
+      updateCursorPos()
     }
 
-    updateCursorPos()
-  }
-
-  if (ch && isEditable(key)) {
-    buffer.addChar(pos.y, pos.x, ch)
-    pos.x++
-    drawLineSmart(pos.y)
+    if (ch && isEditable(key)) {
+      buffer.addChar(pos.y, pos.x, ch)
+      pos.x++
+      drawLineSmart(pos.y)
+    }
   }
 }
 
@@ -101,13 +78,27 @@ function isEditable (key: ?Key): boolean {
   return true
 }
 
-function updateWindow (): void {
-  // $FlowFixMe
-  width = process.stdout.columns
-  // $FlowFixMe
-  height = process.stdout.rows
+function backspace () {
+  if (pos.x > 0) {
+    buffer.removeChar(pos.y, pos.x-1)
+    pos.x--
+    drawLineSmart(pos.y)
 
-  movement.updateSize(width, height)
+  } else if (pos.y > 0) {
+    pos.x = buffer.getRow(pos.y-1).length
+
+    if (pos.y === buffer.length()-1 && buffer.getRow(pos.y).length === 0) {
+      buffer.removeRow(pos.y)
+      pos.y--
+      updateCursorPos()
+      return
+    }
+
+    pos.y--
+    const removed = buffer.removeRow(pos.y+1)
+    buffer.concatRows(pos.y, removed)
+    draw()
+  }
 }
 
 function newLine (): void {
@@ -158,6 +149,15 @@ function drawLineSmart (y: number): void {
   process.stdout.write(parsedRow.join(''))
 
   updateCursorPos()
+}
+
+function updateWindow (): void {
+  // $FlowFixMe
+  width = process.stdout.columns
+  // $FlowFixMe
+  height = process.stdout.rows
+
+  movement.updateSize(width, height)
 }
 
 function updateCursorPos (): void {

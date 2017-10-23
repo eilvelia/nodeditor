@@ -4,7 +4,7 @@ import pkg from '../package.json'
 import program from 'commander'
 import keypress from 'keypress'
 import readline from 'readline'
-import editor from './editor'
+import Editor from './editor'
 
 program
   .version(pkg.version)
@@ -23,4 +23,4 @@ process.on('exit', () => {
   readline.clearScreenDown(process.stdin)
 })
 
-process.stdin.on('keypress', editor.keypress)
+process.stdin.on('keypress', Editor.keypress)
