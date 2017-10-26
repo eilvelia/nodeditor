@@ -20,7 +20,6 @@ export default class Editor {
 
   constructor () {
     this.buffer.allocRow(0)
-    this.updateWindow()
   }
 
   keypress (ch: ?Char, key: ?Key): void {
@@ -82,6 +81,7 @@ export default class Editor {
 
   backspace (): this {
     const { pos, buffer, drawer } = this
+
     if (pos.x > 0) {
       buffer.removeChar(pos.y, pos.x-1)
       pos.x--
@@ -96,6 +96,7 @@ export default class Editor {
 
   removeLine (): this {
     const { buffer, pos, drawer, movement, scroll } = this
+
     pos.x = buffer.getRow(pos.y-1).length
 
     if (pos.y === buffer.length()-1 && buffer.getRow(pos.y).length === 0) {
