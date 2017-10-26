@@ -23,4 +23,7 @@ process.on('exit', () => {
   readline.clearScreenDown(process.stdin)
 })
 
-process.stdin.on('keypress', Editor.keypress)
+const editor = new Editor()
+const onKeypress = editor.keypress.bind(editor)
+
+process.stdin.on('keypress', onKeypress)

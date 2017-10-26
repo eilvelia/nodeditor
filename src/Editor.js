@@ -9,25 +9,25 @@ import log from './logger'
 
 import type { Char, Key } from './typings.h'
 
-let width: number = 0
-let height: number = 0
-
-const pos = new Cursor(0, 0)
-const buffer = new TextBuffer()
-const scroll = new Scroll(0)
-
-const drawer = new Drawer(buffer, pos, scroll)
-const movement = new Movement(buffer, pos, scroll, drawer)
-
-buffer.allocRow(0)
-
-updateWindow()
-
 export default class Editor {
-  static keypress (ch: ?Char, key: ?Key): void {
+  width: number = 0
+  height: number = 0
+  pos: Cursor = new Cursor(0, 0)
+  buffer: TextBuffer = new TextBuffer()
+  scroll: Scroll = new Scroll(0)
+  drawer: Drawer = new Drawer(this.buffer, this.pos, this.scroll)
+  movement: Movement = new Movement(this.buffer, this.pos, this.scroll, this.drawer)
+
+  constructor () {
+    this.buffer.allocRow(0)
+    this.updateWindow()
+  }
+
+  keypress (ch: ?Char, key: ?Key): void {
+    const { movement } = this
     //console.log(ch, key)
 
-    updateWindow()
+    this.updateWindow()
 
     if (key) {
       if (key.ctrl) {
@@ -42,10 +42,10 @@ export default class Editor {
 
       switch (key.name) {
       case 'backspace':
-        backspace()
+        this.backspace()
         return
       case 'return':
-        newLine()
+        this.newLine()
         return
       case 'up':
         movement.up()
@@ -61,72 +61,86 @@ export default class Editor {
       }
     }
 
-    if (ch && isEditable(key)) {
+    if (ch && this.isEditable(key)) {
+      const { buffer, pos, drawer } = this
+
       buffer.addChar(pos.y, pos.x, ch)
       pos.x++
       drawer.drawLineSmart(pos.y)
     }
   }
-}
 
-function isEditable (key: ?Key): boolean {
-  if (pos.x >= width) return false
-  if (key && key.ctrl) return false
-  if (buffer.getRow(pos.y).length >= width) return false
+  isEditable (key: ?Key): boolean {
+    const { pos, buffer, width } = this
 
-  return true
-}
+    if (pos.x >= width) return false
+    if (key && key.ctrl) return false
+    if (buffer.getRow(pos.y).length >= width) return false
 
-function backspace (): void {
-  if (pos.x > 0) {
-    buffer.removeChar(pos.y, pos.x-1)
-    pos.x--
-    drawer.drawLineSmart(pos.y)
-
-  } else if (pos.y > 0) {
-    removeLine()
+    return true
   }
-}
 
-function removeLine (): void {
-  pos.x = buffer.getRow(pos.y-1).length
+  backspace (): this {
+    const { pos, buffer, drawer } = this
+    if (pos.x > 0) {
+      buffer.removeChar(pos.y, pos.x-1)
+      pos.x--
+      drawer.drawLineSmart(pos.y)
 
-  if (pos.y === buffer.length()-1 && buffer.getRow(pos.y).length === 0) {
-    buffer.removeRow(pos.y)
+    } else if (pos.y > 0) {
+      this.removeLine()
+    }
+
+    return this
+  }
+
+  removeLine (): this {
+    const { buffer, pos, drawer, movement, scroll } = this
+    pos.x = buffer.getRow(pos.y-1).length
+
+    if (pos.y === buffer.length()-1 && buffer.getRow(pos.y).length === 0) {
+      buffer.removeRow(pos.y)
+      pos.y--
+      drawer.updateCursorPos()
+      return this
+    }
+
     pos.y--
-    drawer.updateCursorPos()
-    return
+    const removed = buffer.removeRow(pos.y+1)
+    buffer.concatRows(pos.y, removed)
+
+    movement.updateScroll(true)
+    drawer.fullDraw()
+    log('removeLine', scroll.top)
+
+    return this
   }
 
-  pos.y--
-  const removed = buffer.removeRow(pos.y+1)
-  buffer.concatRows(pos.y, removed)
+  newLine (): this {
+    const { buffer, pos, movement, drawer, scroll } = this
 
-  movement.updateScroll(true)
+    const row = buffer.getRow(pos.y)
+    const removed = row.splice(pos.x, row.length - pos.x)
+    pos.y++
+    pos.x = 0
+    buffer.addRow(pos.y, removed)
 
-  drawer.fullDraw()
-  log('removeLine', scroll.top)
-}
+    movement.updateScroll(true)
+    drawer.fullDraw()
+    log('newLine', scroll.top)
 
-function newLine (): void {
-  const row = buffer.getRow(pos.y)
-  const removed = row.splice(pos.x, row.length - pos.x)
-  pos.y++
-  pos.x = 0
-  buffer.addRow(pos.y, removed)
+    return this
+  }
 
-  movement.updateScroll(true)
+  updateWindow (): this {
+    // $FlowFixMe
+    this.width = process.stdout.columns
+    // $FlowFixMe
+    this.height = process.stdout.rows
 
-  drawer.fullDraw()
-  log('newLine', scroll.top)
-}
+    this.movement.updateSize(this.width, this.height)
+    this.drawer.updateSize(this.width, this.height)
 
-function updateWindow (): void {
-  // $FlowFixMe
-  width = process.stdout.columns
-  // $FlowFixMe
-  height = process.stdout.rows
-
-  movement.updateSize(width, height)
-  drawer.updateSize(width, height)
+    return this
+  }
 }
