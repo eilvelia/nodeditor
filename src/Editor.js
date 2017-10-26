@@ -1,31 +1,27 @@
 // @flow
 
-import readline from 'readline'
 import TextBuffer from './TextBuffer'
 import Cursor from './Cursor'
 import Movement from './Movement'
+import Scroll from './Scroll'
+import Drawer from './Drawer'
 import log from './logger'
 
 import type { Char, Key } from './typings.h'
-
-const cursorTo = readline.cursorTo.bind(null, process.stdin)
-//const moveCursor = readline.moveCursor.bind(null, process.stdin)
 
 let width: number = 0
 let height: number = 0
 
 const pos = new Cursor(0, 0)
 const buffer = new TextBuffer()
-const movement = new Movement(buffer, pos)
+const scroll = new Scroll(0)
+
+const drawer = new Drawer(buffer, pos, scroll)
+const movement = new Movement(buffer, pos, scroll, drawer)
 
 buffer.allocRow(0)
 
 updateWindow()
-
-/*const window = {
-  x: { start: 0, end: width },
-  y: { start: 0, end: height }
-}*/
 
 export default class Editor {
   static keypress (ch: ?Char, key: ?Key): void {
@@ -63,14 +59,12 @@ export default class Editor {
       case 'right':
         movement.right()
       }
-
-      updateCursorPos()
     }
 
     if (ch && isEditable(key)) {
       buffer.addChar(pos.y, pos.x, ch)
       pos.x++
-      drawLineSmart(pos.y)
+      drawer.drawLineSmart(pos.y)
     }
   }
 }
@@ -83,27 +77,35 @@ function isEditable (key: ?Key): boolean {
   return true
 }
 
-function backspace () {
+function backspace (): void {
   if (pos.x > 0) {
     buffer.removeChar(pos.y, pos.x-1)
     pos.x--
-    drawLineSmart(pos.y)
+    drawer.drawLineSmart(pos.y)
 
   } else if (pos.y > 0) {
-    pos.x = buffer.getRow(pos.y-1).length
-
-    if (pos.y === buffer.length()-1 && buffer.getRow(pos.y).length === 0) {
-      buffer.removeRow(pos.y)
-      pos.y--
-      updateCursorPos()
-      return
-    }
-
-    pos.y--
-    const removed = buffer.removeRow(pos.y+1)
-    buffer.concatRows(pos.y, removed)
-    draw()
+    removeLine()
   }
+}
+
+function removeLine (): void {
+  pos.x = buffer.getRow(pos.y-1).length
+
+  if (pos.y === buffer.length()-1 && buffer.getRow(pos.y).length === 0) {
+    buffer.removeRow(pos.y)
+    pos.y--
+    drawer.updateCursorPos()
+    return
+  }
+
+  pos.y--
+  const removed = buffer.removeRow(pos.y+1)
+  buffer.concatRows(pos.y, removed)
+
+  movement.updateScroll(true)
+
+  drawer.fullDraw()
+  log('removeLine', scroll.top)
 }
 
 function newLine (): void {
@@ -112,48 +114,11 @@ function newLine (): void {
   pos.y++
   pos.x = 0
   buffer.addRow(pos.y, removed)
-  draw()
-}
 
-function draw (): void {
-  for (let y = 0; y < buffer.length() + 5; y++) {
-    drawLine(y)
-  }
+  movement.updateScroll(true)
 
-  updateCursorPos()
-}
-
-function drawLine (y: number): void {
-  const row = buffer.getRow(y) || []
-
-  const parsedRow = []
-
-  for (let x = 0; x < width; x++) {
-    parsedRow.push(row[x] || ' ')
-  }
-
-  cursorTo(0, y)
-
-  process.stdout.write(parsedRow.join(''))
-}
-
-function drawLineSmart (y: number): void {
-  const row = buffer.getRow(y)
-
-  const start = pos.x > 0 ? pos.x - 1 : 0
-  const end = row.length + 1
-
-  const parsedRow = []
-
-  for (let x = start; x < end; x++) {
-    parsedRow.push(row[x] || ' ')
-  }
-
-  cursorTo(start, y)
-
-  process.stdout.write(parsedRow.join(''))
-
-  updateCursorPos()
+  drawer.fullDraw()
+  log('newLine', scroll.top)
 }
 
 function updateWindow (): void {
@@ -163,9 +128,5 @@ function updateWindow (): void {
   height = process.stdout.rows
 
   movement.updateSize(width, height)
-}
-
-function updateCursorPos (): void {
-  cursorTo(pos.x, pos.y)
-  log(JSON.stringify(pos), JSON.stringify(buffer._buffer))
+  drawer.updateSize(width, height)
 }

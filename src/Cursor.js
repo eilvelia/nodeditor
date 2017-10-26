@@ -1,11 +1,11 @@
 // @flow
 
 export default class Cursor {
-  x: number
-  y: number
+  x: number = 0
+  y: number = 0
 
-  constructor (x: number, y: number) {
-    this.x = x
-    this.y = y
+  constructor (x?: number, y?: number) {
+    this.x = x || 0
+    this.y = y || 0
   }
 }
