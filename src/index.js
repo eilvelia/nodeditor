@@ -1,7 +1,5 @@
 // @flow
 
-console.log('Loading...')
-
 import readline from 'readline'
 import path from 'path'
 import program from 'commander'
@@ -23,6 +21,8 @@ program
 main()
 
 async function main () {
+  console.log('Loading...')
+
   let file: ?string
   let buffer: ?TextBuffer
 
