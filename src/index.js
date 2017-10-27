@@ -32,7 +32,15 @@ async function main () {
 
     log(`File: ${file}`)
 
-    const isDir = await fs.lstatSync(file).isDirectory()
+    let lstat
+
+    try {
+      lstat = await fs.lstatSync(file)
+    } catch (e) {
+      log(`Warning: ${e}`)
+    }
+
+    const isDir = lstat ? lstat.isDirectory() : false
 
     if (isDir) {
       log('isDir')
