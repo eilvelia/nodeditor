@@ -1,6 +1,6 @@
 {
   "name": "nodeditor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Simple console text editor",
   "main": "dist/index.js",
   "scripts": {
@@ -22,7 +22,6 @@
   "bin": {
     "nodeditor": "bin/nodeditor"
   },
-  "private": true,
   "preferGlobal": true,
   "dependencies": {
     "commander": "^2.11.0",
