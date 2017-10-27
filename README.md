@@ -16,8 +16,16 @@ Simple console text editor written in 100% JavaScript.
 Start from command line:
 
 ```sh
-nodeditor [options]
+nodeditor [options] [file]
 ```
+
+## Keyboard shortcuts
+
+|      Command      |      Shortcut      |
+| ----------------- | ------------------ |
+| Save              | `Ctrl-S`           |
+| Save and exit     | `Ctrl-C`, `Ctrl-X` |
+| Exit without save | `Ctrl-D`           |
 
 ## CLI Options
 
