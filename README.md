@@ -21,11 +21,11 @@ nodeditor [options] [file]
 
 ## Keyboard shortcuts
 
-|      Command      |      Shortcut      |
-| ----------------- | ------------------ |
-| Save              | `Ctrl-S`           |
-| Save and exit     | `Ctrl-C`, `Ctrl-X` |
-| Exit without save | `Ctrl-D`           |
+|       Command       |       Shortcut     |
+| ------------------- | ------------------ |
+| Save                | `Ctrl-S`           |
+| Save and exit       | `Ctrl-C`, `Ctrl-X` |
+| Exit without saving | `Ctrl-D`           |
 
 ## CLI Options
 

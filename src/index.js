@@ -36,7 +36,7 @@ async function main () {
 
     if (isDir) {
       log('isDir')
-      console.log(`Error! ${file} is directory`)
+      console.log(`Error! ${file} is a directory.`)
       return
     }
 
