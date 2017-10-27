@@ -10,7 +10,7 @@
     "start": "npm run build && node dist",
     "mocha": "mocha test/EditorFs",
     "test": "npm run eslint && npm run flow && npm run build && npm run mocha",
-    "prepublish": "npm run eslint && npm run flow && npm run test"
+    "prepublish": "npm test"
   },
   "engines": {
     "node": ">=6.0.0"
