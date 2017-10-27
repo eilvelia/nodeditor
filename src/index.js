@@ -1,29 +1,58 @@
 // @flow
 
+console.log('Loading...')
+
 import readline from 'readline'
+import path from 'path'
 import program from 'commander'
 import keypress from 'keypress'
 import Editor from './editor'
+import EditorFs from './EditorFs'
+import TextBuffer from './TextBuffer'
+import log from './logger'
 import pkg from '../package.json'
+
+let filename: string = ''
 
 program
   .version(pkg.version)
+  .arguments('[file]')
+  .action((arg: string) => filename = arg)
   .parse(process.argv)
 
-keypress(process.stdin)
+main()
 
-readline.cursorTo(process.stdin, 0, 0)
-readline.clearScreenDown(process.stdin)
+async function main () {
+  let file: ?string
+  let buffer: ?TextBuffer
 
-// $FlowFixMe
-process.stdin.setRawMode(true)
+  if (filename) {
+    file = path.join(process.cwd(), filename)
 
-process.on('exit', () => {
+    log(`File: ${file}`)
+
+    try {
+      buffer = await EditorFs.readFromFile(file)
+    } catch (e) {
+      log(`Warning: ${e}`)
+    }
+  }
+
+  keypress(process.stdin)
+
   readline.cursorTo(process.stdin, 0, 0)
   readline.clearScreenDown(process.stdin)
-})
 
-const editor = new Editor()
-const onKeypress = editor.keypress.bind(editor)
+  // $FlowFixMe
+  process.stdin.setRawMode(true)
 
-process.stdin.on('keypress', onKeypress)
+  process.on('exit', () => {
+    readline.cursorTo(process.stdin, 0, 0)
+    readline.clearScreenDown(process.stdin)
+  })
+
+  const editor = new Editor(file, buffer)
+  const onKeypress = editor.keypress.bind(editor)
+
+  process.stdin.on('keypress', onKeypress)
+}

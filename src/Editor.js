@@ -5,21 +5,32 @@ import Cursor from './Cursor'
 import Movement from './Movement'
 import Scroll from './Scroll'
 import Drawer from './Drawer'
+import EditorFs from './EditorFs'
 import log from './logger'
 
 import type { Char, Key } from './typings.h'
 
 export default class Editor {
+  file: string = ''
   width: number = 0
   height: number = 0
   pos: Cursor = new Cursor(0, 0)
-  buffer: TextBuffer = new TextBuffer()
   scroll: Scroll = new Scroll(0)
-  drawer: Drawer = new Drawer(this.buffer, this.pos, this.scroll)
-  movement: Movement = new Movement(this.buffer, this.pos, this.scroll, this.drawer)
+  buffer: TextBuffer = new TextBuffer()
+  drawer: Drawer
+  movement: Movement
 
-  constructor () {
+  constructor (file: ?string, buffer: ?TextBuffer) {
+    if (file) this.file = file
+    if (buffer) this.buffer = buffer
+
     this.buffer.allocRow(0)
+
+    this.drawer = new Drawer(this.buffer, this.pos, this.scroll)
+    this.movement = new Movement(this.buffer, this.pos, this.scroll, this.drawer)
+
+    this.updateWindow()
+    this.drawer.fullDraw()
   }
 
   keypress (ch: ?Char, key: ?Key): void {
@@ -31,10 +42,14 @@ export default class Editor {
     if (key) {
       if (key.ctrl) {
         switch (key.name) {
-        case 'c':
-        case 'x':
         case 'd':
           process.stdin.pause()
+          return
+        case 'c':
+        case 'x':
+          process.stdin.pause()
+        case 's':
+          if (this.file) EditorFs.saveToFile(this.file, this.buffer)
           return
         }
       }
