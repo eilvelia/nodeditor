@@ -1,6 +1,6 @@
 {
   "name": "nodeditor",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Simple console text editor",
   "main": "dist/index.js",
   "scripts": {
@@ -50,5 +50,16 @@
     "application",
     "app",
     "flow"
-  ]
+  ],
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bannerets/nodeditor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Bannerets/nodeditor/issues"
+  },
+  "homepage": "https://github.com/Bannerets/nodeditor#readme"
 }
