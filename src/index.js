@@ -2,6 +2,7 @@
 
 import readline from 'readline'
 import path from 'path'
+import fs from 'fs'
 import program from 'commander'
 import keypress from 'keypress'
 import Editor from './editor'
@@ -30,6 +31,14 @@ async function main () {
     file = path.join(process.cwd(), filename)
 
     log(`File: ${file}`)
+
+    const isDir = await fs.lstatSync(file).isDirectory()
+
+    if (isDir) {
+      log('isDir')
+      console.log(`Error! ${file} is directory`)
+      return
+    }
 
     try {
       buffer = await EditorFs.readFromFile(file)

@@ -6,7 +6,6 @@ import Movement from './Movement'
 import Scroll from './Scroll'
 import Drawer from './Drawer'
 import EditorFs from './EditorFs'
-import log from './logger'
 
 import type { Char, Key } from './typings.h'
 
@@ -30,7 +29,7 @@ export default class Editor {
     this.movement = new Movement(this.buffer, this.pos, this.scroll, this.drawer)
 
     this.updateWindow()
-    this.drawer.fullDraw()
+    if (buffer) this.drawer.fullDraw()
   }
 
   keypress (ch: ?Char, key: ?Key): void {
@@ -110,7 +109,7 @@ export default class Editor {
   }
 
   removeLine (): this {
-    const { buffer, pos, drawer, movement, scroll } = this
+    const { buffer, pos, drawer, movement } = this
 
     pos.x = buffer.getRow(pos.y-1).length
 
@@ -127,13 +126,12 @@ export default class Editor {
 
     movement.updateScroll(true)
     drawer.fullDraw()
-    log('removeLine', scroll.top)
 
     return this
   }
 
   newLine (): this {
-    const { buffer, pos, movement, drawer, scroll } = this
+    const { buffer, pos, movement, drawer } = this
 
     const row = buffer.getRow(pos.y)
     const removed = row.splice(pos.x, row.length - pos.x)
@@ -143,7 +141,6 @@ export default class Editor {
 
     movement.updateScroll(true)
     drawer.fullDraw()
-    log('newLine', scroll.top)
 
     return this
   }
