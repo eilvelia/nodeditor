@@ -9,7 +9,7 @@
     "build": "babel src/ -d dist/",
     "start": "npm run build && node dist",
     "mocha": "mocha test/EditorFs",
-    "test": "npm run build && npm run mocha",
+    "test": "npm run eslint && npm run flow && npm run build && npm run mocha",
     "prepublish": "npm run eslint && npm run flow && npm run test"
   },
   "engines": {
