@@ -1,5 +1,9 @@
 # nodeditor [WIP]
 
+[![npm](https://img.shields.io/npm/v/nodeditor.svg?style=flat-square)](https://www.npmjs.com/package/nodeditor)
+[![node](https://img.shields.io/node/v/nodeditor.svg)](https://github.com/Bannerets/nodeditor)
+[![license](https://img.shields.io/github/license/Bannerets/nodeditor.svg?style=flat-square)](https://github.com/Bannerets/nodeditor)
+
 Simple console text editor written in 100% JavaScript.
 
 ## Requirements
