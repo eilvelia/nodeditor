@@ -41,36 +41,36 @@ export default class Editor {
     if (key) {
       if (key.ctrl) {
         switch (key.name) {
-        case 'd':
-          process.stdin.pause()
-          return
-        case 'c':
-        case 'x':
-          process.stdin.pause()
-        case 's':
-          if (this.file) EditorFs.saveToFile(this.file, this.buffer)
-          return
+          case 'd':
+            process.stdin.pause()
+            return
+          case 'c':
+          case 'x':
+            process.stdin.pause()
+          case 's':
+            if (this.file) EditorFs.saveToFile(this.file, this.buffer)
+            return
         }
       }
 
       switch (key.name) {
-      case 'backspace':
-        this.backspace()
-        return
-      case 'return':
-        this.newLine()
-        return
-      case 'up':
-        movement.up()
-        break
-      case 'down':
-        movement.down()
-        break
-      case 'left':
-        movement.left()
-        break
-      case 'right':
-        movement.right()
+        case 'backspace':
+          this.backspace()
+          return
+        case 'return':
+          this.newLine()
+          return
+        case 'up':
+          movement.up()
+          break
+        case 'down':
+          movement.down()
+          break
+        case 'left':
+          movement.left()
+          break
+        case 'right':
+          movement.right()
       }
     }
 

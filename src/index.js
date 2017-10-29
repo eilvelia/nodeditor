@@ -16,7 +16,7 @@ let filename: string = ''
 program
   .version(pkg.version)
   .arguments('[file]')
-  .action((arg: string) => filename = arg)
+  .action((arg: string) => (filename = arg))
   .parse(process.argv)
 
 main()

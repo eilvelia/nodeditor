@@ -85,10 +85,10 @@ export default class Movement {
     if (
       pos.x < this.width &&
       pos.x < buffer.getRow(pos.y).length
-    )
+    ) {
       pos.x++
 
-    else if (buffer.getRow(pos.y+1)) {
+    } else if (buffer.getRow(pos.y+1)) {
       pos.y++
       pos.x = 0
     }
