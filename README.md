@@ -13,14 +13,16 @@ Simple console text editor written in 100% JavaScript.
 
 ## Installation
 
-`npm i -g nodeditor`
+```console
+$ [sudo] npm i -g nodeditor
+```
 
 ## Usage
 
 Start from command line:
 
-```sh
-nodeditor [options] [file]
+```console
+$ nodeditor [options] [file]
 ```
 
 ## Keyboard shortcuts
