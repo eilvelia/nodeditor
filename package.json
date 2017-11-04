@@ -40,10 +40,11 @@
     "eslint-config-standard": "^10.2.1",
     "eslint-plugin-async-await": "0.0.0",
     "eslint-plugin-flowtype": "^2.39.1",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
     "flow-bin": "^0.57.3",
     "flow-typed": "^2.2.1",
-    "mocha": "^4.0.1",
-    "standard": "^10.0.3"
+    "mocha": "^4.0.1"
   },
   "author": "Bannerets <save14@protonmail.com>",
   "license": "MIT",
