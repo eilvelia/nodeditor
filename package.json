@@ -51,10 +51,14 @@
   "keywords": [
     "console",
     "editor",
+    "text-editor",
+    "text editor",
     "console-application",
+    "console application",
     "application",
     "app",
-    "flow"
+    "flow",
+    "flowtype"
   ],
   "directories": {
     "test": "test"
