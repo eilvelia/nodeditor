@@ -9,7 +9,7 @@ import pkg from '../package.json'
 
 const LOG_FILE = 'latest.log'
 
-const ppath = persistPath(`${pkg.name}`)
+const ppath = persistPath(pkg.name)
 
 fse.mkdirpSync(ppath)
 
