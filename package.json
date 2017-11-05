@@ -4,7 +4,7 @@
   "description": "Simple console text editor",
   "main": "dist/index.js",
   "scripts": {
-    "eslint": "eslint src --max-warnings 0",
+    "eslint": "eslint . --max-warnings 0",
     "flow": "flow .",
     "build": "babel src/ -d dist/",
     "start": "npm run build && node dist",
