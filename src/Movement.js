@@ -10,8 +10,9 @@ export default class Movement {
   buffer: TextBuffer
   scroll: Scroll
   drawer: Drawer
-  width: number
-  height: number
+
+  width: number = 0
+  height: number = 0
 
   constructor (
     cursor: Cursor,

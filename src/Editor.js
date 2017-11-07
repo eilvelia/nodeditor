@@ -19,16 +19,29 @@ type Key = {
 }
 
 export default class Editor {
+  stdin: tty$ReadStream
+  stdout: tty$WriteStream
+
   file: string
-  width: number = 0
-  height: number = 0
+
   pos: Cursor = new Cursor(0, 0)
   scroll: Scroll = new Scroll(0)
   buffer: TextBuffer
   drawer: Drawer
   movement: Movement
 
-  constructor (file: ?string, inputBuffer: ?TextBuffer) {
+  width: number = 0 // columns
+  height: number = 0 // rows
+
+  constructor (
+    stdin: tty$ReadStream,
+    stdout: tty$WriteStream,
+    file: ?string,
+    inputBuffer: ?TextBuffer
+  ) {
+    this.stdin = stdin
+    this.stdout = stdout
+
     this.file = file || ''
     this.buffer = inputBuffer || new TextBuffer()
 
@@ -36,7 +49,7 @@ export default class Editor {
 
     buffer.allocRow(0)
 
-    this.drawer = new Drawer(buffer, pos, scroll)
+    this.drawer = new Drawer(stdin, stdout, buffer, pos, scroll)
     this.movement = new Movement(pos, buffer, scroll, this.drawer)
 
     this.updateWindow()
@@ -44,7 +57,7 @@ export default class Editor {
   }
 
   keypress (str: ?string, key: ?Key): void {
-    const { movement } = this
+    const { movement, stdin } = this
 
     const ch: ?Char = str ? toChar(str) : undefined
 
@@ -56,11 +69,11 @@ export default class Editor {
       if (key.ctrl) {
         switch (key.name) {
           case 'd':
-            process.stdin.pause()
+            stdin.pause()
             return
           case 'c':
           case 'x':
-            process.stdin.pause()
+            stdin.pause()
           case 's':
             if (this.file) EditorFs.saveToFile(this.file, this.buffer)
             return
@@ -135,7 +148,7 @@ export default class Editor {
     }
 
     pos.y--
-    const removed = buffer.removeRow(pos.y+1)
+    const removed: Char[] = buffer.removeRow(pos.y+1)
     buffer.concatRows(pos.y, removed)
 
     drawer.updateScroll(true)
@@ -148,7 +161,7 @@ export default class Editor {
     const { buffer, pos, drawer } = this
 
     const row = buffer.getRow(pos.y)
-    const removed = row.splice(pos.x, row.length - pos.x)
+    const removed: Char[] = row.splice(pos.x, row.length - pos.x)
     pos.y++
     pos.x = 0
     buffer.addRow(pos.y, removed)
@@ -160,10 +173,8 @@ export default class Editor {
   }
 
   updateWindow (): this {
-    // $FlowFixMe
-    this.width = process.stdout.columns
-    // $FlowFixMe
-    this.height = process.stdout.rows
+    this.width = this.stdout.columns
+    this.height = this.stdout.rows
 
     this.movement.updateSize(this.width, this.height)
     this.drawer.updateSize(this.width, this.height)

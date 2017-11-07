@@ -3,6 +3,7 @@
 import readline from 'readline'
 import path from 'path'
 import fs from 'fs'
+import tty from 'tty'
 import program from 'commander'
 import keypress from 'keypress'
 import Editor from './Editor'
@@ -21,7 +22,19 @@ program
 
 main()
 
-async function main () {
+async function main (): Promise<void> {
+  const { stdin, stdout } = process
+
+  if (!(stdin instanceof tty.ReadStream)) {
+    console.log('Standard input is not a tty')
+    return
+  }
+
+  if (!(stdout instanceof tty.WriteStream)) {
+    console.log('Standard output is not a tty')
+    return
+  }
+
   console.log('Loading...')
 
   let file: ?string
@@ -55,21 +68,20 @@ async function main () {
     }
   }
 
-  keypress(process.stdin)
+  keypress(stdin)
 
-  readline.cursorTo(process.stdin, 0, 0)
-  readline.clearScreenDown(process.stdin)
+  readline.cursorTo(stdin, 0, 0)
+  readline.clearScreenDown(stdin)
 
-  // $FlowFixMe
-  process.stdin.setRawMode(true)
+  stdin.setRawMode(true)
 
   process.on('exit', () => {
-    readline.cursorTo(process.stdin, 0, 0)
-    readline.clearScreenDown(process.stdin)
+    readline.cursorTo(stdin, 0, 0)
+    readline.clearScreenDown(stdin)
   })
 
-  const editor = new Editor(file, buffer)
+  const editor = new Editor(stdin, stdout, file, buffer)
   const onKeypress = editor.keypress.bind(editor)
 
-  process.stdin.on('keypress', onKeypress)
+  stdin.on('keypress', onKeypress)
 }

@@ -1,19 +1,30 @@
 // @flow
 
+import readline from 'readline'
 import TextBuffer from './TextBuffer'
 import Cursor from './Cursor'
 import Scroll from './Scroll'
-import { cursorTo } from './util'
 import log from './logger'
 
 export default class Drawer {
+  stdin: tty$ReadStream
+  stdout: tty$WriteStream
   buffer: TextBuffer
   pos: Cursor
   scroll: Scroll
-  width: number
-  height: number
 
-  constructor (buffer: TextBuffer, cursor: Cursor, scroll: Scroll) {
+  width: number = 0
+  height: number = 0
+
+  constructor (
+    stdin: tty$ReadStream,
+    stdout: tty$WriteStream,
+    buffer: TextBuffer,
+    cursor: Cursor,
+    scroll: Scroll
+  ) {
+    this.stdin = stdin
+    this.stdout = stdout
     this.buffer = buffer
     this.pos = cursor
     this.scroll = scroll
@@ -37,7 +48,7 @@ export default class Drawer {
   }
 
   drawLine (y: number): this {
-    const { buffer, scroll } = this
+    const { buffer, scroll, stdout } = this
 
     const row = buffer.getRow(y + scroll.top) || []
 
@@ -47,15 +58,15 @@ export default class Drawer {
       parsedRow.push(row[x] || ' ')
     }
 
-    cursorTo(0, y)
+    this.cursorTo(0, y)
 
-    process.stdout.write(parsedRow.join(''))
+    stdout.write(parsedRow.join(''))
 
     return this
   }
 
   drawLineSmart (y: number): this {
-    const { buffer, pos, scroll } = this
+    const { buffer, pos, scroll, stdout } = this
 
     const row = buffer.getRow(y)
 
@@ -68,9 +79,9 @@ export default class Drawer {
       parsedRow.push(row[x] || ' ')
     }
 
-    cursorTo(start, y - scroll.top)
+    this.cursorTo(start, y - scroll.top)
 
-    process.stdout.write(parsedRow.join(''))
+    stdout.write(parsedRow.join(''))
 
     this.updateCursorPos()
 
@@ -99,8 +110,14 @@ export default class Drawer {
   updateCursorPos (): this {
     const { pos, buffer, scroll } = this
 
-    cursorTo(pos.x, pos.y - scroll.top)
+    this.cursorTo(pos.x, pos.y - scroll.top)
     log(JSON.stringify(pos), JSON.stringify(buffer.toArray()))
+
+    return this
+  }
+
+  cursorTo (x?: number, y?: number): this {
+    readline.cursorTo(this.stdin, x, y)
 
     return this
   }
