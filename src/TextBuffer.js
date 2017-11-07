@@ -3,7 +3,7 @@
 import type { Char } from './typings.h'
 
 export default class TextBuffer {
-  _buffer: Char[][] = []
+  _buffer: Char[][]
 
   constructor (buffer?: Char[][]) {
     this._buffer = buffer || []
@@ -40,7 +40,7 @@ export default class TextBuffer {
   }
 
   toArray (): Char[][] {
-    return this._buffer
+    return this._buffer.slice()
   }
 
   addChar (y: number, x: number, ch: Char): this {

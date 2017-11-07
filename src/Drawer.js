@@ -77,6 +77,25 @@ export default class Drawer {
     return this
   }
 
+  updateScroll (noFullDraw?: true): this {
+    const { pos, scroll } = this
+
+    if (pos.y - scroll.top >= this.height) {
+      scroll.top++
+      if (!noFullDraw) this.fullDraw()
+
+      log('scrollChangePlus', scroll.top)
+
+    } else if (pos.y < scroll.top) {
+      scroll.top--
+      if (!noFullDraw) this.fullDraw()
+
+      log('scrollChangeMinus', scroll.top)
+    }
+
+    return this
+  }
+
   updateCursorPos (): this {
     const { pos, buffer, scroll } = this
 

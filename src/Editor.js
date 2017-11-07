@@ -10,26 +10,28 @@ import EditorFs from './EditorFs'
 import type { Char, Key } from './typings.h'
 
 export default class Editor {
-  file: string = ''
+  file: string
   width: number = 0
   height: number = 0
   pos: Cursor = new Cursor(0, 0)
   scroll: Scroll = new Scroll(0)
-  buffer: TextBuffer = new TextBuffer()
+  buffer: TextBuffer
   drawer: Drawer
   movement: Movement
 
-  constructor (file: ?string, buffer: ?TextBuffer) {
-    if (file) this.file = file
-    if (buffer) this.buffer = buffer
+  constructor (file: ?string, inputBuffer: ?TextBuffer) {
+    this.file = file || ''
+    this.buffer = inputBuffer || new TextBuffer()
 
-    this.buffer.allocRow(0)
+    const { buffer, pos, scroll } = this
 
-    this.drawer = new Drawer(this.buffer, this.pos, this.scroll)
-    this.movement = new Movement(this.buffer, this.pos, this.scroll, this.drawer)
+    buffer.allocRow(0)
+
+    this.drawer = new Drawer(buffer, pos, scroll)
+    this.movement = new Movement(pos, buffer, scroll, this.drawer)
 
     this.updateWindow()
-    if (buffer) this.drawer.fullDraw()
+    if (inputBuffer) this.drawer.fullDraw()
   }
 
   keypress (ch: ?Char, key: ?Key): void {
@@ -109,7 +111,7 @@ export default class Editor {
   }
 
   removeLine (): this {
-    const { buffer, pos, drawer, movement } = this
+    const { buffer, pos, drawer } = this
 
     pos.x = buffer.getRow(pos.y-1).length
 
@@ -124,14 +126,14 @@ export default class Editor {
     const removed = buffer.removeRow(pos.y+1)
     buffer.concatRows(pos.y, removed)
 
-    movement.updateScroll(true)
+    drawer.updateScroll(true)
     drawer.fullDraw()
 
     return this
   }
 
   newLine (): this {
-    const { buffer, pos, movement, drawer } = this
+    const { buffer, pos, drawer } = this
 
     const row = buffer.getRow(pos.y)
     const removed = row.splice(pos.x, row.length - pos.x)
@@ -139,7 +141,7 @@ export default class Editor {
     pos.x = 0
     buffer.addRow(pos.y, removed)
 
-    movement.updateScroll(true)
+    drawer.updateScroll(true)
     drawer.fullDraw()
 
     return this

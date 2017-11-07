@@ -4,24 +4,23 @@ import TextBuffer from './TextBuffer'
 import Cursor from './Cursor'
 import Scroll from './Scroll'
 import Drawer from './Drawer'
-import log from './logger'
 
 export default class Movement {
-  buffer: TextBuffer
   pos: Cursor
+  buffer: TextBuffer
   scroll: Scroll
   drawer: Drawer
   width: number
   height: number
 
   constructor (
-    buffer: TextBuffer,
     cursor: Cursor,
+    buffer: TextBuffer,
     scroll: Scroll,
     drawer: Drawer
   ) {
-    this.buffer = buffer
     this.pos = cursor
+    this.buffer = buffer
     this.scroll = scroll
     this.drawer = drawer
   }
@@ -44,8 +43,9 @@ export default class Movement {
       pos.x = 0
     }
 
-    this.updateScroll()
+    drawer.updateScroll()
     drawer.updateCursorPos()
+
     return this
   }
 
@@ -60,8 +60,9 @@ export default class Movement {
       pos.x = buffer.getRow(pos.y).length
     }
 
-    this.updateScroll()
+    drawer.updateScroll()
     drawer.updateCursorPos()
+
     return this
   }
 
@@ -74,8 +75,9 @@ export default class Movement {
       pos.x = buffer.getRow(pos.y).length
     }
 
-    this.updateScroll()
+    drawer.updateScroll()
     drawer.updateCursorPos()
+
     return this
   }
 
@@ -93,26 +95,8 @@ export default class Movement {
       pos.x = 0
     }
 
-    this.updateScroll()
+    drawer.updateScroll()
     drawer.updateCursorPos()
-    return this
-  }
-
-  updateScroll (noFullDraw?: true): this {
-    const { pos, scroll, drawer } = this
-
-    if (pos.y - scroll.top >= this.height) {
-      scroll.top++
-      if (!noFullDraw) drawer.fullDraw()
-
-      log('scrollChangePlus', scroll.top)
-
-    } else if (pos.y < scroll.top) {
-      scroll.top--
-      if (!noFullDraw) drawer.fullDraw()
-
-      log('scrollChangeMinus', scroll.top)
-    }
 
     return this
   }
