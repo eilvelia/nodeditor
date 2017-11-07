@@ -1,6 +1,6 @@
 // @flow
 
-import type { Char } from './typings.h'
+import type { Char } from './Char'
 
 export default class TextBuffer {
   _buffer: Char[][]

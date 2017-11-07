@@ -7,7 +7,16 @@ import Scroll from './Scroll'
 import Drawer from './Drawer'
 import EditorFs from './EditorFs'
 
-import type { Char, Key } from './typings.h'
+import { type Char, toChar } from './Char'
+
+type Key = {
+  name: string,
+  ctrl: boolean,
+  meta: boolean,
+  shift: boolean,
+  sequence: string,
+  code?: string
+}
 
 export default class Editor {
   file: string
@@ -34,8 +43,11 @@ export default class Editor {
     if (inputBuffer) this.drawer.fullDraw()
   }
 
-  keypress (ch: ?Char, key: ?Key): void {
+  keypress (str: ?string, key: ?Key): void {
     const { movement } = this
+
+    const ch: ?Char = str ? toChar(str) : undefined
+
     //console.log(ch, key)
 
     this.updateWindow()

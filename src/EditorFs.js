@@ -4,7 +4,7 @@ import { EOL } from 'os'
 import fse from 'fs-extra'
 import TextBuffer from './TextBuffer'
 
-import type { Char } from './typings.h'
+import { type Char, toChar } from './Char'
 
 export default class EditorFs {
   static saveToFile (file: string, buffer: TextBuffer): Promise<void> {
@@ -21,7 +21,10 @@ export default class EditorFs {
     const buffer: Char[][] = bytes
       .toString()
       .split(/\r?\n/)
-      .map(row => row.split(''))
+      .map((row: string): Char[] => row
+        .split('') // string[]
+        .map(toChar) // Char[]
+      )
 
     return new TextBuffer(buffer)
   }
