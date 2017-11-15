@@ -11,7 +11,7 @@ Simple console text editor written in 100% JavaScript.
 
 ## Requirements
 
-- `node` v6.0.0+
+- `node` v6.5.0+
 - `npm`
 
 ## Installation
