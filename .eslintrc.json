@@ -14,10 +14,9 @@
     "async-await"
   ],
   "rules": {
-    "async-await/space-after-async": 1,
-    "async-await/space-after-await": 1,
+    "async-await/space-after-async": 2,
+    "async-await/space-after-await": 2,
     "spaced-comment": 0,
-    "no-fallthrough": 0,
     "padded-blocks": 0,
     "space-infix-ops": 0
   }

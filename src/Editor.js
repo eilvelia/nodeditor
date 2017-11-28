@@ -22,7 +22,7 @@ export default class Editor {
   stdin: tty$ReadStream
   stdout: tty$WriteStream
 
-  file: string
+  filename: string
 
   pos: Cursor = new Cursor(0, 0)
   scroll: Scroll = new Scroll(0)
@@ -36,13 +36,13 @@ export default class Editor {
   constructor (
     stdin: tty$ReadStream,
     stdout: tty$WriteStream,
-    file: ?string,
+    filename: ?string,
     inputBuffer: ?TextBuffer
   ) {
     this.stdin = stdin
     this.stdout = stdout
 
-    this.file = file || ''
+    this.filename = filename || ''
     this.buffer = inputBuffer || new TextBuffer()
 
     const { buffer, pos, scroll } = this
@@ -67,6 +67,7 @@ export default class Editor {
 
     if (key) {
       if (key.ctrl) {
+        /* eslint-disable no-fallthrough */
         switch (key.name) {
           case 'd':
             stdin.pause()
@@ -75,9 +76,10 @@ export default class Editor {
           case 'x':
             stdin.pause()
           case 's':
-            if (this.file) EditorFs.saveToFile(this.file, this.buffer)
+            if (this.filename) EditorFs.saveToFile(this.filename, this.buffer)
             return
         }
+        /* eslint-enable no-fallthrough */
       }
 
       switch (key.name) {

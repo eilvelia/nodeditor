@@ -45,15 +45,14 @@ async function main (): Promise<void> {
 
     log(`File: ${file}`)
 
-    let lstat
+    let isDir: boolean = false
 
     try {
-      lstat = await fs.lstatSync(file)
+      const lstat: fs.Stats = fs.lstatSync(file)
+      isDir = lstat.isDirectory()
     } catch (e) {
       log(`Warning: ${e}`)
     }
-
-    const isDir = lstat ? lstat.isDirectory() : false
 
     if (isDir) {
       log('isDir')
