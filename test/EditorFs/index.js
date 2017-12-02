@@ -60,4 +60,13 @@ describe('EditorFs', () => {
       assert.deepEqual(buffer.toArray(), chars)
     })
   })
+
+  describe('readFromFileSync', () => {
+    it('test.1.txt', () => {
+      const filepath = path.join(__dirname, 'test.1.txt')
+
+      const buffer = EditorFs.readFromFileSync(filepath)
+      assert.deepEqual(buffer.toArray(), chars)
+    })
+  })
 })
