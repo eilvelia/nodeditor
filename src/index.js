@@ -2,13 +2,10 @@
 
 import readline from 'readline'
 import path from 'path'
-import fs from 'fs'
 import tty from 'tty'
 import program from 'commander'
 import keypress from 'keypress'
 import Editor from './Editor'
-import EditorFs from './EditorFs'
-import TextBuffer from './TextBuffer'
 import log from './logger'
 import pkg from '../package.json'
 
@@ -22,7 +19,7 @@ program
 
 main()
 
-async function main (): Promise<void> {
+function main (): void {
   const { stdin, stdout } = process
 
   if (!(stdin instanceof tty.ReadStream)) {
@@ -40,35 +37,18 @@ async function main (): Promise<void> {
   const editor = new Editor(stdin, stdout)
 
   let absolutePath: ?string
-  let buffer: ?TextBuffer
 
   if (filepath) {
     absolutePath = path.join(process.cwd(), filepath)
 
     log(`File: ${absolutePath}`)
 
-    let isDir: boolean = false
-
     try {
-      const lstat: fs.Stats = fs.lstatSync(absolutePath)
-      isDir = lstat.isDirectory()
+      editor.loadFile(absolutePath)
     } catch (e) {
-      log(`Warning: ${e}`)
-    }
-
-    if (isDir) {
-      log('isDir')
-      console.log(`Error! ${absolutePath} is a directory.`)
+      console.log(e.message)
       return
     }
-
-    try {
-      buffer = await EditorFs.readFromFile(absolutePath)
-    } catch (e) {
-      log(`Warning: ${e}`)
-    }
-
-    if (absolutePath) editor.loadFile(absolutePath, buffer)
   }
 
   keypress(stdin)

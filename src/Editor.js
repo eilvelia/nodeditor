@@ -1,5 +1,6 @@
 // @flow
 
+import fs from 'fs'
 import TextBuffer from './TextBuffer'
 import Cursor from './Cursor'
 import Movement from './Movement'
@@ -46,10 +47,31 @@ export default class Editor {
     this.updateWindow()
   }
 
-  loadFile (filename: string, buffer: ?TextBuffer): this {
+  loadFile (filename: string): this {
     log('loadFile', filename)
 
     this.filename = filename
+
+    let buffer: ?TextBuffer
+    let isDir: boolean = false
+
+    try {
+      const lstat: fs.Stats = fs.lstatSync(filename)
+      isDir = lstat.isDirectory()
+    } catch (e) {
+      log(`Warning: ${e}`)
+    }
+
+    if (isDir) {
+      log('isDir')
+      throw new Error(`${filename} is a directory.`)
+    }
+
+    try {
+      buffer = EditorFs.readFromFileSync(filename)
+    } catch (e) {
+      log(`Warning: ${e}`)
+    }
 
     if (buffer) {
       this.buffer = buffer
