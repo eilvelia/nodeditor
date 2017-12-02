@@ -1,10 +1,11 @@
 // @flow
 
 import readline from 'readline'
-import TextBuffer from './TextBuffer'
-import Cursor from './Cursor'
-import Scroll from './Scroll'
 import log from './logger'
+
+import type TextBuffer from './TextBuffer'
+import type Cursor from './Cursor'
+import type Scroll from './Scroll'
 
 export default class Drawer {
   stdin: tty$ReadStream

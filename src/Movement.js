@@ -1,9 +1,10 @@
 // @flow
 
-import TextBuffer from './TextBuffer'
-import Cursor from './Cursor'
-import Scroll from './Scroll'
-import Drawer from './Drawer'
+import type TextBuffer from './TextBuffer'
+import type Cursor from './Cursor'
+import type Scroll from './Scroll'
+import type Drawer from './Drawer'
+import type { Char } from './Char'
 
 export default class Movement {
   pos: Cursor
@@ -43,7 +44,7 @@ export default class Movement {
 
     if (pos.y > 0) {
       pos.y--
-      const row = buffer.getRow(pos.y)
+      const row: Char[] = buffer.getRow(pos.y)
       pos.x = row[pos.x] ? pos.x : row.length
     } else {
       pos.x = 0
@@ -60,7 +61,7 @@ export default class Movement {
 
     if (buffer.getRow(pos.y+1)) {
       pos.y++
-      const row = buffer.getRow(pos.y)
+      const row: Char[] = buffer.getRow(pos.y)
       pos.x = row[pos.x] ? pos.x : row.length
     } else {
       pos.x = buffer.getRow(pos.y).length
@@ -90,12 +91,8 @@ export default class Movement {
   right (): this {
     const { pos, buffer, drawer } = this
 
-    if (
-      pos.x < this.width &&
-      pos.x < buffer.getRow(pos.y).length
-    ) {
+    if (pos.x < this.width && pos.x < buffer.getRow(pos.y).length) {
       pos.x++
-
     } else if (buffer.getRow(pos.y+1)) {
       pos.y++
       pos.x = 0

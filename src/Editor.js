@@ -196,10 +196,12 @@ export default class Editor {
   newLine (): this {
     const { buffer, pos, drawer } = this
 
-    const row = buffer.getRow(pos.y)
+    const row: Char[] = buffer.getRow(pos.y)
     const removed: Char[] = row.splice(pos.x, row.length - pos.x)
+
     pos.y++
     pos.x = 0
+
     buffer.addRow(pos.y, removed)
 
     drawer.updateScroll(true)

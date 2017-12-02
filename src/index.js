@@ -46,7 +46,7 @@ function main (): void {
     try {
       editor.loadFile(absolutePath)
     } catch (e) {
-      console.log(e.message)
+      console.log(e.toString())
       return
     }
   }
