@@ -37,6 +37,11 @@ export default class Drawer {
     return this
   }
 
+  updateBuffer (buffer: TextBuffer): this {
+    this.buffer = buffer
+    return this
+  }
+
   fullDraw (): this {
     for (let y = 0; y < this.height; y++) {
       this.drawLine(y)

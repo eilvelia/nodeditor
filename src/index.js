@@ -12,12 +12,12 @@ import TextBuffer from './TextBuffer'
 import log from './logger'
 import pkg from '../package.json'
 
-let filename: string = ''
+let filepath: string = ''
 
 program
   .version(pkg.version)
   .arguments('[file]')
-  .action((arg: string) => (filename = arg))
+  .action((arg: string) => (filepath = arg))
   .parse(process.argv)
 
 main()
@@ -37,18 +37,20 @@ async function main (): Promise<void> {
 
   console.log('Loading...')
 
-  let file: ?string
+  const editor = new Editor(stdin, stdout)
+
+  let absolutePath: ?string
   let buffer: ?TextBuffer
 
-  if (filename) {
-    file = path.join(process.cwd(), filename)
+  if (filepath) {
+    absolutePath = path.join(process.cwd(), filepath)
 
-    log(`File: ${file}`)
+    log(`File: ${absolutePath}`)
 
     let isDir: boolean = false
 
     try {
-      const lstat: fs.Stats = fs.lstatSync(file)
+      const lstat: fs.Stats = fs.lstatSync(absolutePath)
       isDir = lstat.isDirectory()
     } catch (e) {
       log(`Warning: ${e}`)
@@ -56,15 +58,17 @@ async function main (): Promise<void> {
 
     if (isDir) {
       log('isDir')
-      console.log(`Error! ${file} is a directory.`)
+      console.log(`Error! ${absolutePath} is a directory.`)
       return
     }
 
     try {
-      buffer = await EditorFs.readFromFile(file)
+      buffer = await EditorFs.readFromFile(absolutePath)
     } catch (e) {
       log(`Warning: ${e}`)
     }
+
+    if (absolutePath) editor.loadFile(absolutePath, buffer)
   }
 
   keypress(stdin)
@@ -79,7 +83,6 @@ async function main (): Promise<void> {
     readline.clearScreenDown(stdin)
   })
 
-  const editor = new Editor(stdin, stdout, file, buffer)
   const onKeypress = editor.keypress.bind(editor)
 
   stdin.on('keypress', onKeypress)

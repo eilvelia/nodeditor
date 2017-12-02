@@ -7,6 +7,7 @@ export default class TextBuffer {
 
   constructor (buffer?: Char[][]) {
     this._buffer = buffer || []
+    this.allocRow(0)
   }
 
   allocRow (y: number = this._buffer.length): this {

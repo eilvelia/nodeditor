@@ -33,6 +33,11 @@ export default class Movement {
     return this
   }
 
+  updateBuffer (buffer: TextBuffer): this {
+    this.buffer = buffer
+    return this
+  }
+
   up (): this {
     const { pos, buffer, drawer } = this
 

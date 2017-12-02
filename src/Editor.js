@@ -6,6 +6,7 @@ import Movement from './Movement'
 import Scroll from './Scroll'
 import Drawer from './Drawer'
 import EditorFs from './EditorFs'
+import log from './logger'
 
 import { type Char, toChar } from './Char'
 
@@ -22,38 +23,49 @@ export default class Editor {
   stdin: tty$ReadStream
   stdout: tty$WriteStream
 
-  filename: string
+  filename: string = ''
 
   pos: Cursor = new Cursor(0, 0)
   scroll: Scroll = new Scroll(0)
-  buffer: TextBuffer
+  buffer: TextBuffer = new TextBuffer()
   drawer: Drawer
   movement: Movement
 
   width: number = 0 // columns
   height: number = 0 // rows
 
-  constructor (
-    stdin: tty$ReadStream,
-    stdout: tty$WriteStream,
-    filename: ?string,
-    inputBuffer: ?TextBuffer
-  ) {
+  constructor (stdin: tty$ReadStream, stdout: tty$WriteStream) {
     this.stdin = stdin
     this.stdout = stdout
 
-    this.filename = filename || ''
-    this.buffer = inputBuffer || new TextBuffer()
-
     const { buffer, pos, scroll } = this
-
-    buffer.allocRow(0)
 
     this.drawer = new Drawer(stdin, stdout, buffer, pos, scroll)
     this.movement = new Movement(pos, buffer, scroll, this.drawer)
 
     this.updateWindow()
-    if (inputBuffer) this.drawer.fullDraw()
+  }
+
+  loadFile (filename: string, buffer: ?TextBuffer): this {
+    log('loadFile', filename)
+
+    this.filename = filename
+
+    if (buffer) {
+      this.buffer = buffer
+
+      const { drawer, movement, pos } = this
+
+      drawer.updateBuffer(buffer)
+      movement.updateBuffer(buffer)
+
+      pos.x = 0
+      pos.y = 0
+
+      drawer.fullDraw()
+    }
+
+    return this
   }
 
   keypress (str: ?string, key: ?Key): void {
