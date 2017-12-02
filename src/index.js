@@ -34,6 +34,18 @@ function main (): void {
 
   console.log('Loading...')
 
+  keypress(stdin)
+
+  readline.cursorTo(stdin, 0, 0)
+  readline.clearScreenDown(stdin)
+
+  stdin.setRawMode(true)
+
+  process.on('exit', () => {
+    readline.cursorTo(stdin, 0, 0)
+    readline.clearScreenDown(stdin)
+  })
+
   const editor = new Editor(stdin, stdout)
 
   let absolutePath: ?string
@@ -50,18 +62,6 @@ function main (): void {
       return
     }
   }
-
-  keypress(stdin)
-
-  readline.cursorTo(stdin, 0, 0)
-  readline.clearScreenDown(stdin)
-
-  stdin.setRawMode(true)
-
-  process.on('exit', () => {
-    readline.cursorTo(stdin, 0, 0)
-    readline.clearScreenDown(stdin)
-  })
 
   const onKeypress = editor.keypress.bind(editor)
 
