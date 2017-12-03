@@ -41,3 +41,19 @@ $ nodeditor [options] [file]
 - `-V`, `--version` -- output the version number
 
 - `-h`, `--help` -- output usage information
+
+## Contribution
+
+##### Tests
+
+```sh
+npm test
+```
+
+> node v7.6.0+ is required to run tests
+
+##### Logs
+
+```sh
+tail -f `node -p "require('persist-path')(require('./package').name)"`/latest.log
+```
