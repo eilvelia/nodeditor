@@ -8,7 +8,6 @@ import type Cursor from './Cursor'
 import type Scroll from './Scroll'
 
 export default class Drawer {
-  stdin: tty$ReadStream
   stdout: tty$WriteStream
   buffer: TextBuffer
   pos: Cursor
@@ -18,13 +17,11 @@ export default class Drawer {
   height: number = 0
 
   constructor (
-    stdin: tty$ReadStream,
     stdout: tty$WriteStream,
     buffer: TextBuffer,
     cursor: Cursor,
     scroll: Scroll
   ) {
-    this.stdin = stdin
     this.stdout = stdout
     this.buffer = buffer
     this.pos = cursor
@@ -123,7 +120,7 @@ export default class Drawer {
   }
 
   cursorTo (x?: number, y?: number): this {
-    readline.cursorTo(this.stdin, x, y)
+    readline.cursorTo(this.stdout, x, y)
 
     return this
   }

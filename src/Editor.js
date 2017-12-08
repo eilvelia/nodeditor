@@ -41,7 +41,7 @@ export default class Editor {
 
     const { buffer, pos, scroll } = this
 
-    this.drawer = new Drawer(stdin, stdout, buffer, pos, scroll)
+    this.drawer = new Drawer(stdout, buffer, pos, scroll)
     this.movement = new Movement(pos, buffer, scroll, this.drawer)
 
     this.updateWindow()

@@ -36,14 +36,14 @@ function main (): void {
 
   keypress(stdin)
 
-  readline.cursorTo(stdin, 0, 0)
-  readline.clearScreenDown(stdin)
+  readline.cursorTo(stdout, 0, 0)
+  readline.clearScreenDown(stdout)
 
   stdin.setRawMode(true)
 
   process.on('exit', () => {
-    readline.cursorTo(stdin, 0, 0)
-    readline.clearScreenDown(stdin)
+    readline.cursorTo(stdout, 0, 0)
+    readline.clearScreenDown(stdout)
   })
 
   const editor = new Editor(stdin, stdout)
