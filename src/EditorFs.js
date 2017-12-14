@@ -5,7 +5,7 @@ import fs from 'fs'
 import fse from 'fs-extra'
 import TextBuffer from './TextBuffer'
 
-import { type Char, toChar } from './Char'
+/*:: import { type Char, toChar } from './Char' */
 
 // static class
 export default class EditorFs {
@@ -29,14 +29,14 @@ export default class EditorFs {
   }
 
   static _bytesToTextBuffer (bytes: Buffer): TextBuffer {
-    const buffer: Char[][] = bytes
+    const chars: Char[][] = bytes
       .toString()
       .split(/\r?\n/)
       .map((row: string): Char[] => row
         .split('') // string[]
-        .map(toChar) // Char[]
+/*::    .map(toChar) */ // Char[]
       )
 
-    return new TextBuffer(buffer)
+    return new TextBuffer(chars)
   }
 }

@@ -18,6 +18,8 @@
     "async-await/space-after-await": 2,
     "spaced-comment": 0,
     "padded-blocks": 0,
-    "space-infix-ops": 0
+    "space-infix-ops": 0,
+    "indent": 0,
+    "indent-legacy": [2, 2, { "SwitchCase": 1 }]
   }
 }

@@ -9,7 +9,7 @@ import Drawer from './Drawer'
 import EditorFs from './EditorFs'
 import log from './logger'
 
-import { type Char, toChar } from './Char'
+import type { Char } from './Char'
 
 type Key = {
   name: string,
@@ -90,10 +90,8 @@ export default class Editor {
     return this
   }
 
-  keypress (str: ?string, key: ?Key): void {
+  keypress (ch: ?Char, key: ?Key): void {
     const { movement, stdin } = this
-
-    const ch: ?Char = str ? toChar(str) : undefined
 
     //console.log(ch, key)
 
