@@ -1,10 +1,13 @@
 [ignore]
-dist/
+<PROJECT_ROOT>/dist/
 
 [include]
 
 [libs]
 
 [lints]
+untyped-type-import=error
 
 [options]
+module.use_strict=true
+munge_underscores=true
