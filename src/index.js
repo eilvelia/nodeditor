@@ -22,6 +22,11 @@ main()
 function main (): void {
   const { stdin, stdout } = process
 
+  /*::
+  ;(stdin: tty$ReadStream | stream$Readable)
+  ;(stdout: tty$WriteStream | stream$Writable)
+  */
+
   if (!(stdin instanceof tty.ReadStream)) {
     console.log('Standard input is not a tty')
     return
@@ -31,6 +36,11 @@ function main (): void {
     console.log('Standard output is not a tty')
     return
   }
+
+  /*::
+  ;(stdin: tty$ReadStream)
+  ;(stdout: tty$WriteStream)
+  */
 
   console.log('Loading...')
 
