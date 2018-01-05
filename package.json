@@ -8,7 +8,7 @@
     "flow": "flow .",
     "build": "babel src/ -d dist/",
     "start": "npm run build && node dist",
-    "mocha": "mocha test/EditorFs",
+    "mocha": "mocha test test/EditorFs",
     "test": "npm run eslint && npm run flow && npm run build && npm run mocha",
     "prepublish": "flow-typed update",
     "prepublishOnly": "npm test",
