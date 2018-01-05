@@ -53,7 +53,7 @@ export default class Drawer {
   drawLine (y: number): this {
     const { buffer, scroll, stdout } = this
 
-    const row = buffer.getRow(y + scroll.top) || []
+    const row = buffer.rowToArray(y + scroll.top) || []
 
     const parsedRow = []
 
@@ -71,7 +71,7 @@ export default class Drawer {
   drawLineSmart (y: number): this {
     const { buffer, pos, scroll, stdout } = this
 
-    const row = buffer.getRow(y)
+    const row = buffer.rowToArray(y)
 
     const start = pos.x > 0 ? pos.x - 1 : 0
     const end = row.length + 1

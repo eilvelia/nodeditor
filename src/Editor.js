@@ -26,8 +26,8 @@ export default class Editor {
 
   filename: string = ''
 
-  pos: Cursor = new Cursor(0, 0)
-  scroll: Scroll = new Scroll(0)
+  pos: Cursor = new Cursor()
+  scroll: Scroll = new Scroll()
   buffer: TextBuffer = new TextBuffer()
   drawer: Drawer
   movement: Movement
@@ -149,7 +149,7 @@ export default class Editor {
 
     if (pos.x >= width) return false
     if (key && key.ctrl) return false
-    if (buffer.getRow(pos.y).length >= width) return false
+    if (buffer.getRowLength(pos.y) >= width) return false
 
     return true
   }
@@ -158,6 +158,7 @@ export default class Editor {
     const { pos, buffer, drawer } = this
 
     if (pos.x > 0) {
+
       buffer.removeChar(pos.y, pos.x-1)
       pos.x--
       drawer.drawLineSmart(pos.y)
@@ -172,21 +173,27 @@ export default class Editor {
   removeLine (): this {
     const { buffer, pos, drawer } = this
 
-    pos.x = buffer.getRow(pos.y-1).length
+    pos.x = buffer.getRowLength(pos.y - 1)
 
-    if (pos.y === buffer.length()-1 && buffer.getRow(pos.y).length === 0) {
+    if (
+      pos.y === buffer.getCountOfRows() - 1 &&
+      buffer.getRowLength(pos.y) === 0
+    ) {
+
       buffer.removeRow(pos.y)
       pos.y--
       drawer.updateCursorPos()
-      return this
+
+    } else {
+
+      pos.y--
+      const removed: Char[] = buffer.removeRow(pos.y + 1)
+      buffer.concatRows(pos.y, removed)
+
+      drawer.updateScroll(true)
+      drawer.fullDraw()
+
     }
-
-    pos.y--
-    const removed: Char[] = buffer.removeRow(pos.y+1)
-    buffer.concatRows(pos.y, removed)
-
-    drawer.updateScroll(true)
-    drawer.fullDraw()
 
     return this
   }
@@ -194,8 +201,7 @@ export default class Editor {
   newLine (): this {
     const { buffer, pos, drawer } = this
 
-    const row: Char[] = buffer.getRow(pos.y)
-    const removed: Char[] = row.splice(pos.x, row.length - pos.x)
+    const removed: Char[] = buffer.cutPartOfRow(pos.y, pos.x)
 
     pos.y++
     pos.x = 0

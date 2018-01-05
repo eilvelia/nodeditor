@@ -4,7 +4,6 @@ import type TextBuffer from './TextBuffer'
 import type Cursor from './Cursor'
 import type Scroll from './Scroll'
 import type Drawer from './Drawer'
-import type { Char } from './Char'
 
 export default class Movement {
   pos: Cursor
@@ -44,8 +43,7 @@ export default class Movement {
 
     if (pos.y > 0) {
       pos.y--
-      const row: Char[] = buffer.getRow(pos.y)
-      pos.x = row[pos.x] ? pos.x : row.length
+      pos.x = buffer.getChar(pos.y, pos.x) ? pos.x : buffer.getRowLength(pos.y)
     } else {
       pos.x = 0
     }
@@ -59,12 +57,11 @@ export default class Movement {
   down (): this {
     const { pos, buffer, drawer } = this
 
-    if (buffer.getRow(pos.y+1)) {
+    if (buffer.isRowExists(pos.y+1)) {
       pos.y++
-      const row: Char[] = buffer.getRow(pos.y)
-      pos.x = row[pos.x] ? pos.x : row.length
+      pos.x = buffer.getChar(pos.y, pos.x) ? pos.x : buffer.getRowLength(pos.y)
     } else {
-      pos.x = buffer.getRow(pos.y).length
+      pos.x = buffer.getRowLength(pos.y)
     }
 
     drawer.updateScroll()
@@ -76,10 +73,11 @@ export default class Movement {
   left (): this {
     const { pos, buffer, drawer } = this
 
-    if (pos.x > 0) pos.x--
-    else if (pos.y > 0) {
+    if (pos.x > 0) {
+      pos.x--
+    } else if (pos.y > 0) {
       pos.y--
-      pos.x = buffer.getRow(pos.y).length
+      pos.x = buffer.getRowLength(pos.y)
     }
 
     drawer.updateScroll()
@@ -91,9 +89,9 @@ export default class Movement {
   right (): this {
     const { pos, buffer, drawer } = this
 
-    if (pos.x < this.width && pos.x < buffer.getRow(pos.y).length) {
+    if (pos.x < this.width && pos.x < buffer.getRowLength(pos.y)) {
       pos.x++
-    } else if (buffer.getRow(pos.y+1)) {
+    } else if (buffer.isRowExists(pos.y+1)) {
       pos.y++
       pos.x = 0
     }
