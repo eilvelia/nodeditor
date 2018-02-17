@@ -1,6 +1,6 @@
 {
   "name": "nodeditor",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "description": "Simple console text editor",
   "main": "dist/index.js",
   "scripts": {
