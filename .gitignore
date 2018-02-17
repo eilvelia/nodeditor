@@ -1,7 +1,7 @@
 .DS_Store
 node_modules/
 package-lock.json
-/flow-typed/
+/flow-typed/npm/
 dist/
 /test/**/.temp/
 *.log

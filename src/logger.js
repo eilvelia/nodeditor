@@ -1,7 +1,7 @@
 // @flow
 
 import fs from 'fs'
-import fse from 'fs-extra'
+import { mkdirpSync } from 'fs-extra'
 import path from 'path'
 import { EOL } from 'os'
 import persistPath from 'persist-path'
@@ -11,7 +11,7 @@ const LOG_FILE = 'latest.log'
 
 const ppath = persistPath(pkg.name)
 
-fse.mkdirpSync(ppath)
+mkdirpSync(ppath)
 
 const stream = process.env.NODE_ENV === 'production'
   ? null

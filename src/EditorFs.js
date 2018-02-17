@@ -1,8 +1,7 @@
 // @flow
 
 import { EOL } from 'os'
-import fs from 'fs'
-import fse from 'fs-extra'
+import * as fse from 'fs-extra'
 import TextBuffer from './TextBuffer'
 
 /*:: import { type Char, toChar } from './Char' */
@@ -24,7 +23,7 @@ export default class EditorFs {
   }
 
   static readFromFileSync (file: string): TextBuffer {
-    const bytes: Buffer = fs.readFileSync(file)
+    const bytes: Buffer = fse.readFileSync(file)
     return EditorFs._bytesToTextBuffer(bytes)
   }
 
