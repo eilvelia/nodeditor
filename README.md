@@ -42,7 +42,7 @@ $ nodeditor [options] [file]
 
 - `-h`, `--help` -- output usage information
 
-## Contribution
+## Contributing
 
 ##### Tests
 
